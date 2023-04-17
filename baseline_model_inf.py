@@ -35,5 +35,8 @@ end_logits = end_logits.squeeze(-1).tolist()
 # Decode the tokenized input to get the answer
 answer_start = int(torch.argmax(torch.tensor(start_logits)))
 answer_end = int(torch.argmax(torch.tensor(end_logits))) + 1
-answer = tokenizer.convert_tokens_to_string(tokenizer.convert_ids_to_tokens(inputs["input_ids"][0][answer_start:answer_end]))
-print(answer)
+# !!! added +100 because model prints too few characters, fix later!!!
+answer = tokenizer.convert_tokens_to_string(tokenizer.convert_ids_to_tokens(inputs["input_ids"][0][answer_start:answer_end+100]))
+
+print(f"Expected: {context[647]}", end='\n\n\n')
+print("Answer: ", answer)
