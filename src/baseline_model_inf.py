@@ -5,7 +5,7 @@ from transformers import AutoTokenizer, AutoModelForQuestionAnswering
 
 
 # 2. Load the chat history JSON file
-with open("data/raw/chat_history.json", "r") as f:
+with open("../data/raw/chat_history.json", "r") as f:
     chat_history = json.load(f)
 
 # 3. Upload each message as a separate document to OpenAI
