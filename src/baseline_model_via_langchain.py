@@ -5,6 +5,10 @@ from langchain.llms import HuggingFacePipeline
 from transformers import AutoModelForQuestionAnswering, AutoTokenizer, pipeline
 from telegram_chat_loader import TelegramChatLoader
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 def get_model(repo_id=None):
     model_id = "AlexKay/xlm-roberta-large-qa-multilingual-finedtuned-ru"
@@ -30,10 +34,11 @@ def get_documents(chat_file_path):
     return documents
 
 
-model = get_model()
-documents = get_documents("/home/qazybek/NVME/repos/mlops/qa_llm/data/raw/chat_history.json")
+model = get_model_stablelm()
+# model = get_model()
+# documents = get_documents("/home/qazybek/NVME/repos/mlops/qa_llm/data/raw/chat_history.json")
 
 chain  = load_qa_chain(llm=model, chain_type="map_reduce")
-query = "что спросил Kazybek Askarbek?"
+# query = "что спросил Kazybek Askarbek?"
 
-print(chain.run(input_documents=documents, question=query))
+# print(chain.run(input_documents=documents, question=query))
