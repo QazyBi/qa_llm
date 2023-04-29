@@ -2,8 +2,13 @@ from langchain.llms import HuggingFacePipeline
 from transformers import AutoModelForQuestionAnswering, AutoTokenizer, pipeline
 
 from src.benchmarks.CampingBenchmark import CampingBenchmark
+# import logging
+from src.utils import get_logger
+
+logger = get_logger()
 
 def get_model(to_langchain=False):
+    logger.info("using huggingface xlm roberta")
     model_id = "AlexKay/xlm-roberta-large-qa-multilingual-finedtuned-ru"
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     model = AutoModelForQuestionAnswering.from_pretrained(model_id)

@@ -4,8 +4,13 @@ from langchain.llms.huggingface_pipeline import HuggingFacePipeline
 
 from src.benchmarks.CampingBenchmark import CampingBenchmark
 
+from src.utils import get_logger
+
+logger = get_logger()
+
 
 def get_model(to_langchain=True) -> HuggingFacePipeline:
+    logger.info("using huggingface standard qa")
     DEVICE = torch.device("cuda:0")
     qa_model_pipe = pipeline("question-answering", device=DEVICE, return_full_text=True)
     if to_langchain:
