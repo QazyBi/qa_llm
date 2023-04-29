@@ -1,36 +1,67 @@
+import pickle
 from langchain.chains import RetrievalQA
 from langchain.indexes import VectorstoreIndexCreator
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.document_loaders import PyPDFLoader
-
-from src.utils import get_data_path
-# from src.question_answering.extractive_qa_huggingface import get_model
-from src.question_answering.xlm_roberta_ru import get_model
-# from src.question_answering.bloom import get_model
-from src.embedders.instruct_embeddings import get_embedder
+from pathlib import Path
 from langchain.vectorstores.faiss import FAISS
 
+from src.utils import get_data_path
+from src.question_answering.extractive_qa_huggingface import get_model
+# from src.question_answering.xlm_roberta_ru import get_model
+# from src.question_answering.bloom import get_model
+from src.embedders.instruct_embeddings import get_embedder
+from src.benchmarks.TelegramChats import TelegramBenchmark
 
-if __name__ == "__main__":
-    loader = PyPDFLoader(str(get_data_path() / "raw" / "example.pdf"))
-    documents = loader.load()[:10]
-    # split the documents into chunks
-    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
-    texts = text_splitter.split_documents(documents)
-    # select which embeddings we want to use
-    embedder = get_embedder()
-    # create the vectorestore to use as the index
-    # db = Chroma.from_documents(texts, embeddings)
-    db = FAISS.from_documents(documents, embedder)  # this can be read from pkl file
+
+
+def get_vectorstore(type_="telegram", load_cache=True):
+    """
+        TODO:
+            [ ] try different embedders
+            [ ] try different vectorstores
+
+
+            [ ] try different text splitters 
+                # split the documents into chunks
+                text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+                texts = text_splitter.split_documents(documents)
+    """
+    if type_ == "telegram":
+        if load_cache and Path("/home/qazybek/NVME/repos/mlops/qa_llm/vectorstore.pkl").exists():
+            with open("/home/qazybek/NVME/repos/mlops/qa_llm/vectorstore.pkl", "rb") as f:
+                vectorstore = pickle.load(f)
+                return vectorstore
+        else:
+            documents = TelegramBenchmark.get_documents()
+
+            embedder = get_embedder()
+            # create the vectorestore to use as the index
+            # db = Chroma.from_documents(texts, embeddings)
+            vectorstore = FAISS.from_documents(documents, embedder)  # this can be read from pkl file
+
+            # Save vectorstore
+            with open("/home/qazybek/NVME/repos/mlops/qa_llm/vectorstore.pkl", "wb") as f:
+                pickle.dump(vectorstore, f)
+
+            return vectorstore
+    else:
+        raise NotImplementedError()
+
+
+def main():
+    # loader = PyPDFLoader(str(get_data_path() / "raw" / "example.pdf"))
+    # documents = loader.load()[:10]
+    vectorstore = get_vectorstore(load_cache=True)
 
     # expose this index in a retriever interface
-    retriever = db.as_retriever(search_type="similarity", search_kwargs={"k":3})
+    retriever = vectorstore.as_retriever(search_type="similarity", search_kwargs={"k":3})
 
     model_type = "not  langchain" # not 
-    query = "How many AI publications in 2021?"
-
+    # query = "How many AI publications in 2021?"
+    query, answer = TelegramBenchmark.get_random_sample()
 
     llm = get_model(False)
 
@@ -46,6 +77,13 @@ if __name__ == "__main__":
     else:
 
         rel_docs = retriever.get_relevant_documents(query)
+        print(f"Question: {query} - {answer}", end='\n\n')
         for doc in rel_docs:
+            print(doc)
             # print(doc.page_content)
             print(llm(question=query, context=doc.page_content))
+            print()
+
+
+if __name__ == "__main__":
+    main()
