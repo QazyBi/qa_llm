@@ -1,7 +1,7 @@
 from langchain.llms import HuggingFacePipeline
 from transformers import AutoModelForQuestionAnswering, AutoTokenizer, pipeline
 
-from src.benchmarks.CampingBenchmark import CampingBenchmark
+from src.data.CampingBenchmark import CampingBenchmark
 # import logging
 from src.utils import get_logger
 

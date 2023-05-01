@@ -8,7 +8,7 @@ from langchain.document_loaders import PyPDFLoader
 
 # from message_search.langchain import 
 # from src.question_answering.extractive_qa_huggingface import get_model
-from src.question_answering.bloom import get_model
+from src.models.bloom import get_model
 # from src.question_answering.xlm_roberta_ru import get_model
 from src.utils.chat_data import get_documents
 from src.utils import get_data_path

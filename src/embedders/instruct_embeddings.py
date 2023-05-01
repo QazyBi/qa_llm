@@ -1,12 +1,19 @@
 """
 check for more: https://habr.com/ru/articles/669674/
+llamacpp
+cohere - paid
+
 """
 
 from functools import partial
-from langchain.embeddings import HuggingFaceInstructEmbeddings
+
+# pip install transformers sentencepiece
+import torch
+from transformers import AutoTokenizer, AutoModel, BertModel, BertTokenizerFast
 
 
 def get_embedder():
+    from langchain.embeddings import HuggingFaceInstructEmbeddings
     embeddings = HuggingFaceInstructEmbeddings(
             embed_instruction="Represent the each separate message for retrieval: ",
             query_instruction="represenet the message"  # Represent the question for retrieving supporting texts from the messages: 
@@ -14,9 +21,15 @@ def get_embedder():
     return embeddings
 
 
-# pip install transformers sentencepiece
-import torch
-from transformers import AutoTokenizer, AutoModel
+def get_embedder_hf():
+    from langchain.embeddings import HuggingFaceEmbeddings
+
+    model_name = "sentence-transformers/all-mpnet-base-v2"
+    model_kwargs = {'device': 'cuda:0'}
+    hf = HuggingFaceEmbeddings(model_name=model_name, model_kwargs=model_kwargs)
+
+    return hf
+
 
 def get_embedder_rubert():
     """https://huggingface.co/cointegrated/rubert-tiny2"""
@@ -33,10 +46,6 @@ def get_embedder_rubert():
         return embeddings[0].cpu().numpy()
 
     return partial(embed_bert_cls, model=model, tokenizer=tokenizer)
-
-
-import torch
-from transformers import BertModel, BertTokenizerFast
 
 
 def get_embedder_labse():

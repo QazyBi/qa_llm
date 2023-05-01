@@ -1,3 +1,7 @@
+# %%
+import sys
+
+sys.path.append('/home/qazybek/NVME/repos/mlops/qa_llm')
 import pickle
 from langchain.chains import RetrievalQA
 from langchain.indexes import VectorstoreIndexCreator
@@ -9,12 +13,12 @@ from pathlib import Path
 from langchain.vectorstores.faiss import FAISS
 
 from src.utils import get_data_path
-from src.question_answering.extractive_qa_huggingface import get_model
+# from src.models.extractive_qa_huggingface import get_model
+from src.models.stablelm import get_model
 # from src.question_answering.xlm_roberta_ru import get_model
 # from src.question_answering.bloom import get_model
 from src.embedders.instruct_embeddings import get_embedder
-from src.benchmarks.TelegramChats import TelegramBenchmark
-
+from src.data.TelegramChats import TelegramBenchmark
 
 
 def get_vectorstore(type_="telegram", load_cache=True):
@@ -49,7 +53,9 @@ def get_vectorstore(type_="telegram", load_cache=True):
             return vectorstore
     else:
         raise NotImplementedError()
+    
 
+# %%
 
 def main():
     # loader = PyPDFLoader(str(get_data_path() / "raw" / "example.pdf"))
@@ -59,13 +65,15 @@ def main():
     # expose this index in a retriever interface
     retriever = vectorstore.as_retriever(search_type="similarity", search_kwargs={"k":3})
 
-    model_type = "not  langchain" # not 
     # query = "How many AI publications in 2021?"
     query, answer = TelegramBenchmark.get_random_sample()
 
-    llm = get_model(False)
+    to_langchain = True
 
-    if model_type == "langchain":
+    
+    llm = get_model(to_langchain)
+
+    if to_langchain:
         """
         
             huggingfacepipeline supports only "text2text-generation", "text-generation" models, thus I need to pick powerful models for thats
@@ -74,6 +82,7 @@ def main():
         qa = RetrievalQA.from_chain_type(
             llm=llm, chain_type="stuff", retriever=retriever, return_source_documents=True)
         result = qa({"query": query})
+        print(result)
     else:
 
         rel_docs = retriever.get_relevant_documents(query)

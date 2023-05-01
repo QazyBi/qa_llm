@@ -2,7 +2,7 @@ import torch
 from transformers import pipeline
 from langchain.llms.huggingface_pipeline import HuggingFacePipeline
 
-from src.benchmarks.CampingBenchmark import CampingBenchmark
+from src.data.CampingBenchmark import CampingBenchmark
 
 from src.utils import get_logger
 
@@ -22,6 +22,7 @@ def get_model(to_langchain=True) -> HuggingFacePipeline:
 
 if __name__ == "__main__":
     model = get_model(False)
+
     question, answer = CampingBenchmark.get_random_sample()
     context = CampingBenchmark.get_context()
 
