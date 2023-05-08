@@ -15,7 +15,7 @@ class TelegramBenchmark:
         # 'how many people will go to camping?': 'three'
     }
 
-    data_path = get_data_path() / 'raw' / 'chat_history.json'
+    data_path = get_data_path() / 'raw' / 'django_chat_history.json'  # 'chat_history.json'
 
     @staticmethod
     def get_context() -> str:

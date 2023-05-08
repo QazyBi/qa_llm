@@ -66,7 +66,6 @@ texts = text_splitter.split_documents(documents)
 # %%
 embedder = get_embedder()
 
-
 # %%
 vectorstore = FAISS.from_documents(texts, embedder)
 
@@ -84,7 +83,7 @@ model = AutoModelForCausalLM.from_pretrained(repo_id)
 # model.cuda() # .half()
 
 pipe = pipeline(
-    "text-generation", model=model, tokenizer=tokenizer, device='cuda:1', max_new_tokens=1000, temperature=0.1
+    "text-generation", model=model, tokenizer=tokenizer, device='cuda:0', max_new_tokens=1000, temperature=0.1
 )
 
 from langchain import HuggingFacePipeline
