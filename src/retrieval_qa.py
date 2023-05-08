@@ -67,8 +67,6 @@ retriever = vectorstore.as_retriever(search_type="similarity", search_kwargs={"k
 
 # query = "How many AI publications in 2021?"
 query, answer = TelegramBenchmark.get_random_sample()
-
-
 # %%
 
 to_langchain = True
@@ -100,7 +98,7 @@ def format_prompt(question, context):
 # input_text = [f"### Human: Resume this text: \n\n{your_prompt_here}\n\n### Assistant:"][0]
 
 pipe = pipeline(
-    "text-generation", model=model, tokenizer=tokenizer, device='cuda:1', max_new_tokens=10
+    "text-generation", model=model, tokenizer=tokenizer, device='cuda:1', max_new_tokens=500
 )
 llm = HuggingFacePipeline(pipeline=pipe)
 

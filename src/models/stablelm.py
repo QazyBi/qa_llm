@@ -126,9 +126,9 @@ from transformers import AutoModelForCausalLM, LlamaTokenizer
 import torch
 
 
-model_id = "TheBloke/stable-vicuna-13B-HF"
+model_id = "thebloke/stable-vicuna-13B-HF"
 Tokenizer = LlamaTokenizer.from_pretrained(model_id)
-# model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto", load_in_8bit=False)
+model = AutoModelForCausalLM.from_pretrained(model_id)  # , device_map="auto", load_in_8bit=False)
 
 
 def get_response(prompt, model):

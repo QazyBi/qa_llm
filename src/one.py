@@ -88,12 +88,11 @@ pipe = pipeline(
 
 from langchain import HuggingFacePipeline
 
-llm = HuggingFacePipeline(pipeline=pipe)# max_new_tokens
+llm = HuggingFacePipeline(pipeline=pipe)
 
 # %%
 qa = RetrievalQA.from_chain_type(
             llm=llm, chain_type="map_reduce", retriever=retriever, return_source_documents=True)
-
 # %%
 query = "how many AI publications?"
 result = qa({"query": query})
